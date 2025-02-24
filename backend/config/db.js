@@ -14,4 +14,14 @@ const pool = mysql.createPool({
   ssl: { rejectUnauthorized: true },
 });
 
+(async () => {
+  try {
+    const connection = await pool.getConnection();
+    console.log("✅ Successfully connected to MySQL!");
+    connection.release();
+  } catch (err) {
+    console.error("❌ Database connection failed:", err.message);
+  }
+})();
+
 module.exports = pool;
