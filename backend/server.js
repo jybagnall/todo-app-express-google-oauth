@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -17,7 +18,7 @@ const priorityRoutes = require("./routes/priorityRoutes");
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Your frontend URL
+    origin: process.env.PRODUCTION_FRONTEND_URL, // Your frontend URL
     credentials: true, // ✅ Allow credentials (cookies, sessions)
   })
 ); // Allow frontend to talk to backend

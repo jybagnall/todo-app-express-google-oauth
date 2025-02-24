@@ -7,12 +7,13 @@ import axios from "axios";
 export default function TodoList() {
   const [todos, setTodos] = useState([]);
   const { user } = useUser();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const fetchPriorityList = useCallback(async () => {
     if (!user) return;
 
     try {
-      const res = await axios.get("http://localhost:5000/todos", {
+      const res = await axios.get(`${API_URL}/todos`, {
         withCredentials: true,
       });
       const data = await res.data; // parsed by axios
@@ -34,7 +35,7 @@ export default function TodoList() {
 
     try {
       await axios.post(
-        "http://localhost:5000/todos",
+        `${API_URL}/todos`,
         { text: newText.trim() },
         { withCredentials: true }
       );
@@ -47,7 +48,7 @@ export default function TodoList() {
 
   const removeTodo = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/todos/delete/${id}`, {
+      await axios.delete(`${API_URL}/todos/delete/${id}`, {
         withCredentials: true,
       });
 
@@ -60,7 +61,7 @@ export default function TodoList() {
   const toggleTodo = async (id) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/todos/toggle/${id}`,
+        `${API_URL}/todos/toggle/${id}`,
         {},
         {
           withCredentials: true,
@@ -84,7 +85,7 @@ export default function TodoList() {
   const editTodo = async (id, text) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/todos/${id}`,
+        `${API_URL}/todos/${id}`,
         { text: text.trim() },
         { withCredentials: true }
       );

@@ -7,12 +7,13 @@ import { useUser } from "./UserContext";
 export default function PriorityList() {
   const [priorities, setPriorities] = useState([]);
   const { user } = useUser();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const fetchPriorities = useCallback(async () => {
     if (!user) return;
 
     try {
-      const res = await axios.get("http://localhost:5000/priorities", {
+      const res = await axios.get(`${API_URL}/priorities`, {
         withCredentials: true,
       });
 
@@ -34,7 +35,7 @@ export default function PriorityList() {
 
     try {
       await axios.post(
-        "http://localhost:5000/priorities",
+        `${API_URL}/priorities`,
         { text: text.trim() },
         { withCredentials: true }
       );
@@ -49,7 +50,7 @@ export default function PriorityList() {
 
   const removePriority = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/priorities/delete/${id}`, {
+      await axios.delete(`${API_URL}/priorities/delete/${id}`, {
         withCredentials: true,
       });
 
@@ -62,7 +63,7 @@ export default function PriorityList() {
   const togglePriority = async (id) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/priorities/toggle/${id}`,
+        `${API_URL}/priorities/toggle/${id}`,
         {},
         {
           withCredentials: true,
@@ -91,7 +92,7 @@ export default function PriorityList() {
 
     try {
       const res = await axios.put(
-        `http://localhost:5000/priorities/${id}`,
+        `${API_URL}/priorities/${id}`,
         { text: text.trim() },
         {
           withCredentials: true,
