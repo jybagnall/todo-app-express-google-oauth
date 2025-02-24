@@ -28,12 +28,6 @@ app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
-});
-
 app.use((req, res, next) => {
   if (req.user) {
     req.session.user = req.user; // ✅ Ensure the user is stored
