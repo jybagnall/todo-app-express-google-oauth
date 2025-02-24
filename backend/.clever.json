@@ -1,0 +1,12 @@
+{
+  "apps": [
+    {
+      "app_id": "app_5654d708-2ac5-44a6-ad1f-358d6e4755ee",
+      "org_id": "user_fa474ee8-fd70-4a96-8125-ade378222c38",
+      "deploy_url": "https://push-n3-par-clevercloud-customers.services.clever-cloud.com/app_5654d708-2ac5-44a6-ad1f-358d6e4755ee.git",
+      "git_ssh_url": "git+ssh://git@push-n3-par-clevercloud-customers.services.clever-cloud.com/app_5654d708-2ac5-44a6-ad1f-358d6e4755ee.git",
+      "name": "todo-app-backend",
+      "alias": "todo-app-backend"
+    }
+  ]
+}
