@@ -24,7 +24,6 @@ export default function TodoItem({
     />
   ) : (
     <div className="relative flex gap-3 py-2 border-b last:border-none items-center">
-      {/* ✅ Todo Name */}
       <div className="min-w-0 flex-1 text-sm/6">
         <label
           htmlFor={`todo-${id}`}
@@ -36,7 +35,6 @@ export default function TodoItem({
         </label>
       </div>
 
-      {/* ✅ Custom Checkbox */}
       <div className="flex h-6 shrink-0 items-center">
         <div className="group grid size-4 grid-cols-1">
           <input
@@ -72,9 +70,7 @@ export default function TodoItem({
         </div>
       </div>
 
-      {/* ✅ Buttons with Hover Effect to Show Messages */}
       <div className="flex space-x-2">
-        {/* ✅ Edit Button */}
         <div className="relative group">
           <button
             onClick={handleToggleEdit}
@@ -87,7 +83,6 @@ export default function TodoItem({
           </span>
         </div>
 
-        {/* ✅ Delete Button */}
         <div className="relative group">
           <button
             onClick={() => removeTodo(id)}

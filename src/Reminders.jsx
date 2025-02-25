@@ -5,7 +5,7 @@ import { useUser } from "./UserContext";
 export default function Reminders() {
   const [reminder, setReminder] = useState("");
   const { user } = useUser();
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchReminders = useCallback(async () => {
     if (!user) return;
@@ -18,7 +18,7 @@ export default function Reminders() {
       if (res.data.text) {
         setReminder(res.data.text);
       } else {
-        setReminder(""); // ✅ Handle case where no reminder exists
+        setReminder("");
       }
     } catch (e) {
       console.error("failed to fetch reminders", e);

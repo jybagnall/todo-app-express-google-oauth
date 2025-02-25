@@ -21,7 +21,7 @@ router.get("", async (req, res) => {
 
 router.post("", async (req, res) => {
   const { text } = req.body;
-  const user_id = req.session.user?.id; // return user.id or undefined
+  const user_id = req.session.user?.id; 
 
   if (!user_id) {
     return res.status(401).json({ error: "User not logged in" });
@@ -95,7 +95,7 @@ router.put("/toggle/:id", async (req, res) => {
     const completedStatus =
       "SELECT completed FROM todo WHERE id=? AND user_id=?";
     const [todo] = await pool.execute(completedStatus, [id, user_id]);
-    // 'pool.execute' returns [query result, metadata].
+   
 
     if (!todo.length) {
       return res.status(404).json({ error: "Todo not found" });

@@ -71,7 +71,6 @@ export default function PriorityItem({
       </div>
 
       <div className="flex space-x-2">
-        {/* ✅ Edit Button */}
         <div className="relative group">
           <button
             onClick={handleToggleEdit}

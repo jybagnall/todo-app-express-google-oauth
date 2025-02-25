@@ -12,7 +12,6 @@ export default function Form({ addTodo, isLoggedIn }) {
     if (!isLoggedIn) return;
 
     if (!data.newItem.trim()) {
-      // empty submits
       alert("The field cannot be empty.");
       return;
     }
@@ -40,7 +39,6 @@ export default function Form({ addTodo, isLoggedIn }) {
           aria-invalid={errors.newItem ? "true" : "false"}
         />
 
-        {/* ✅ Animated Bottom Border */}
         <div
           className={`absolute inset-x-0 bottom-0 border-t ${
             errors.newItem ? "border-red-500" : "border-gray-300"
@@ -51,7 +49,6 @@ export default function Form({ addTodo, isLoggedIn }) {
           aria-hidden="true"
         ></div>
 
-        {/* ✅ Error Icon (Only visible when there's an error) */}
         {errors.newItem && (
           <svg
             className="absolute right-3 top-1/2 -translate-y-[100%] size-5 text-red-500 sm:size-4"
@@ -67,7 +64,6 @@ export default function Form({ addTodo, isLoggedIn }) {
           </svg>
         )}
 
-        {/* ✅ Error Message (Only visible if there's an error) */}
         {errors.newItem && (
           <p
             className="mt-1 text-xs text-red-600"
@@ -95,11 +91,7 @@ export default function Form({ addTodo, isLoggedIn }) {
         </svg>
       </button>
 
-      {/* {!isLoggedIn && (
-        <p className="mt-2 text-sm text-red-600" aria-live="assertive">
-          Please log in to add a task.
-        </p>
-      )} */}
+     
     </form>
   );
 }

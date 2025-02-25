@@ -43,8 +43,7 @@ router.post("", async (req, res) => {
       user_id: user_id,
     };
 
-    res.status(201).json(newP); // send to frontend in JSON format.
-    // can’t send JavaScript objects directly in an HTTP response.
+    res.status(201).json(newP);
   } catch (e) {
     console.error("Error inserting priority:", e);
     return res.status(500).json({ error: e.message });

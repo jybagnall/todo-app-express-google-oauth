@@ -5,16 +5,23 @@ import axios from "axios";
 export default function UserStatusBar() {
   const [user, setUser] = useState(null);
 
-  // {withCredentials}: let browser send session cookies with request
-  // so the backend server recognizes the session
+  const BACKEND_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.PRODUCTION_BACKEND_URL
+      : process.env.BACKEND_URL;
+
+  const FRONTEND_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.PRODUCTION_FRONTEND_URL
+      : process.env.FRONTEND_URL;
+
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await axios.get("http://localhost:5000/auth/user", {
+        const res = await axios.get(`${BACKEND_URL}/auth/user`, {
           withCredentials: true,
-        }); // ensure the session is saved after login.
+        });
         console.log("Fetched user:", res.data.user);
-
         setUser(res.data.user);
       } catch (e) {
         console.error("User not logged in", e);
@@ -22,16 +29,16 @@ export default function UserStatusBar() {
       }
     }
     fetchUser();
-  }, []);
+  }, [BACKEND_URL]);
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:5000/auth/logout", {
+      await axios.get(`${BACKEND_URL}/auth/logout`, {
         withCredentials: true,
-      }); // ensure the session is cleared.
+      });
 
       setUser(null);
-      window.location.href = "http://localhost:5173";
+      window.location.href = FRONTEND_URL;
     } catch (e) {
       console.error("Logout failed", e);
     }

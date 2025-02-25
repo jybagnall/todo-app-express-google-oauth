@@ -1,10 +1,8 @@
 require("dotenv").config();
 
 const express = require("express");
-
 const cors = require("cors");
 const app = express();
-const path = require("path");
 
 require("./config/passportConfig");
 
@@ -12,31 +10,29 @@ const sessionMiddleware = require("./config/sessionConfig");
 const passport = require("passport");
 
 const authRoutes = require("./routes/authRoutes");
-
 const todoRoutes = require("./routes/todoRoutes");
 const reminderRoutes = require("./routes/reminderRoutes");
 const priorityRoutes = require("./routes/priorityRoutes");
 
 app.use(
   cors({
-    origin: process.env.PRODUCTION_FRONTEND_URL, // Your frontend URL
-    credentials: true, // ✅ Allow credentials (cookies, sessions)
+    origin: process.env.PRODUCTION_FRONTEND_URL,
+    credentials: true,
   })
-); // Allow frontend to talk to backend
+);
 
-app.use(express.json()); // Parse JSON body
+app.use(express.json());
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
   if (req.user) {
-    req.session.user = req.user; // ✅ Ensure the user is stored
+    req.session.user = req.user;
   }
   next();
 });
 
-// ✅ Use Routes
 app.use("/auth", authRoutes);
 
 app.use("/todos", todoRoutes);

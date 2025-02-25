@@ -1,7 +1,5 @@
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { useState } from "react";
-import RegisterOptions from "./RegisterOptions";
 
 export default function RegisterForm() {
   const {
@@ -9,23 +7,34 @@ export default function RegisterForm() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
   const [redirect, setRedirect] = useState(false);
+
+  const BACKEND_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.PRODUCTION_BACKEND_URL
+      : process.env.BACKEND_URL;
+
+  const FRONTEND_URL =
+    process.env.NODE_ENV === "production"
+      ? process.env.PRODUCTION_FRONTEND_URL
+      : process.env.FRONTEND_URL;
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post("http://localhost:5000/auth/register", data);
+      const res = await axios.post(`${BACKEND_URL}/auth/register`, data);
 
       if (res.status === 201) {
-        window.location.href = "http://localhost:5173/";
-        // navigate("/"); 📍when success, navigate to the homepage
+        window.location.href = FRONTEND_URL;
       }
-    } catch {
+    } catch (error) {
+      console.error("Registration failed:", error);
       setRedirect(true);
     }
   };
+
   if (redirect) {
-    return <RegisterOptions />;
+    window.location.href = FRONTEND_URL;
+    return null;
   }
 
   return (

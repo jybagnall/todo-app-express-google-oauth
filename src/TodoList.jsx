@@ -7,7 +7,7 @@ import axios from "axios";
 export default function TodoList() {
   const [todos, setTodos] = useState([]);
   const { user } = useUser();
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchPriorityList = useCallback(async () => {
     if (!user) return;
@@ -16,7 +16,7 @@ export default function TodoList() {
       const res = await axios.get(`${API_URL}/todos`, {
         withCredentials: true,
       });
-      const data = await res.data; // parsed by axios
+      const data = await res.data;
       setTodos(data);
     } catch (e) {
       console.error("failed to fetch todos", e);
@@ -105,7 +105,6 @@ export default function TodoList() {
       <h2 className="text-lg font-semibold mb-2">TO DO</h2>
       <Form addTodo={addTodo} isLoggedIn={user} />
 
-      {/* ✅ Apply fieldset for accessibility & grouping */}
       <fieldset className="space-y-2 mt-2">
         {todos.map((item) => (
           <TodoItem

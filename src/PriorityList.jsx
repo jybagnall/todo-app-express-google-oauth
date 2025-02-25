@@ -7,7 +7,7 @@ import { useUser } from "./UserContext";
 export default function PriorityList() {
   const [priorities, setPriorities] = useState([]);
   const { user } = useUser();
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchPriorities = useCallback(async () => {
     if (!user) return;
@@ -40,9 +40,7 @@ export default function PriorityList() {
         { withCredentials: true }
       );
 
-      fetchPriorities(); // ✅ Fetch updated list
-      // const data = await res.data;
-      // setPriorities((priorities) => [...priorities, data]);
+      fetchPriorities();
     } catch (e) {
       console.error("failed to fetch priorities in front", e);
     }

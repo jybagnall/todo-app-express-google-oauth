@@ -21,7 +21,6 @@ export default function PriorityForm({ addNewPriority, isLoggedIn }) {
       className="relative flex items-center w-full mt-2 gap-2"
     >
       <div className="relative w-full">
-        {/* ✅ Input Field */}
         <input
           type="text"
           {...register("newP", { required: "*The field cannot be empty." })}
@@ -35,7 +34,6 @@ export default function PriorityForm({ addNewPriority, isLoggedIn }) {
           aria-invalid={errors.newP ? "true" : "false"}
         />
 
-        {/* ✅ Animated Bottom Border */}
         <div
           className={`absolute inset-x-0 bottom-0 border-t ${
             errors.newP ? "border-red-500" : "border-gray-300"
@@ -46,7 +44,6 @@ export default function PriorityForm({ addNewPriority, isLoggedIn }) {
           aria-hidden="true"
         ></div>
 
-        {/* ✅ Error Icon (Only visible if there's an error) */}
         {errors.newP && (
           <svg
             className="absolute right-3 top-1/2 -translate-y-[100%] size-5 text-red-500 sm:size-4"
@@ -62,7 +59,6 @@ export default function PriorityForm({ addNewPriority, isLoggedIn }) {
           </svg>
         )}
 
-        {/* ✅ Error Message (Only visible if there's an error) */}
         {errors.newP && (
           <p
             className="mt-1 text-xs text-red-600"
