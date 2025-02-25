@@ -5,13 +5,12 @@ import { useUser } from "./UserContext";
 export default function Reminders() {
   const [reminder, setReminder] = useState("");
   const { user } = useUser();
-  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchReminders = useCallback(async () => {
     if (!user) return;
 
     try {
-      const res = await axios.get(`${API_URL}/reminders`, {
+      const res = await axios.get("/api/reminders", {
         withCredentials: true,
       });
 
@@ -43,7 +42,7 @@ export default function Reminders() {
 
     try {
       await axios.post(
-        `${API_URL}/reminders`,
+        "/api/reminders",
         { text: reminder },
         { withCredentials: true }
       );

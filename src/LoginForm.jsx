@@ -2,27 +2,33 @@ import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-export default function RegisterForm() {
+export default function LoginForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const [loginFailed, setLoginFailed] = useState(false);
   const [redirect, setRedirect] = useState(false);
 
   const onSubmit = async (data) => {
+    setLoginFailed(false);
     try {
-      const res = await axios.post("/api/auth/register", data, {withCredentials: true});
+      const res = await axios.post("/api/auth/login", {username: data.email, password: data.password}, {withCredentials: true});
 
       if (res.status === 201) {
         // redirect to homepage
         window.location.href = "/";
       }
     } catch (error) {
-      console.error("Registration failed:", error);
-      setRedirect(true);
+      console.error("Login failed:", error);
+      setLoginFailed(true);
     }
   };
+
+  const onReject = (errorObject, event) => {
+    console.log(errorObject);
+  }
 
   if (redirect) {
     window.location.href = "/";
@@ -31,10 +37,7 @@ export default function RegisterForm() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input {...register("name", { required: true })} placeholder="Name" className="peer block w-full bg-lime-50 px-3 py-1.5 text-gray-900 placeholder-gray-500 focus:outline-none sm:text-sm" />
-        {errors.name?.message && errors.name.message}
-
+      <form onSubmit={handleSubmit(onSubmit, onReject)}>
         <input
           {...register("email", {
             required: true,
@@ -57,8 +60,9 @@ export default function RegisterForm() {
           className="mt-3 peer block w-full bg-lime-50 px-3 py-1.5 text-gray-900 placeholder-gray-500 focus:outline-none sm:text-sm"
         />
         {errors.password?.message && errors.password.message}
-        <button type="submit" className="mt-2 w-full bg-emerald-600 text-white py-2 rounded-md hover:bg-emerald-500">Register</button>
+        <button type="submit" className="mt-2 w-full bg-emerald-600 text-white py-2 rounded-md hover:bg-emerald-500">Log In</button>
       </form>
+      {loginFailed && <div className="mt-2 font-semibold text-red-600">Incorrect username or password</div>}
     </div>
   );
 }

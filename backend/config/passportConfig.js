@@ -4,8 +4,10 @@
 // create a new record in the DB (if not existing yet)
 // store the user in the session
 
+const crypto = require("crypto");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const LocalStrategy = require("passport-local");
 const pool = require("./db");
 require("dotenv").config();
 
@@ -15,7 +17,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -51,6 +53,32 @@ passport.use(
     }
   )
 );
+
+passport.use(new LocalStrategy(async (username, password, done) => {
+  try {
+    console.log(`Attempting to log in with username ${username}...`);
+    const [result] = await pool.execute("SELECT * FROM users WHERE email = ?", [username]);
+    if (result.length === 0) {
+      return done(null, false, { message: "Incorrect username or password." });
+    }
+
+    const user = result[0];
+
+    crypto.pbkdf2(password, user.salt, 310000, 32, "sha256", (err, hashedPassword) => {
+      if (err) {
+        return done(err, null);
+      }
+
+      if (user.hashed_password !== hashedPassword.toString("base64")) {
+        return done(null, false, {message: "Incorrect username or password."});
+      }
+
+      return done(null, user);
+    });
+  } catch (error) {
+    return done(error, null);
+  }
+}));
 
 // ✅ store user id in session, {"passport": { "user": 10234 }}
 passport.serializeUser((user, done) => {

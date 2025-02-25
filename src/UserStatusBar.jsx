@@ -1,24 +1,14 @@
-import { useState, useEffect } from "react";
-
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 export default function UserStatusBar() {
   const [user, setUser] = useState(null);
 
-  const BACKEND_URL =
-    process.env.NODE_ENV === "production"
-      ? process.env.PRODUCTION_BACKEND_URL
-      : process.env.BACKEND_URL;
-
-  const FRONTEND_URL =
-    process.env.NODE_ENV === "production"
-      ? process.env.PRODUCTION_FRONTEND_URL
-      : process.env.FRONTEND_URL;
-
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await axios.get(`${BACKEND_URL}/auth/user`, {
+        const res = await axios.get("/api/auth/user", {
           withCredentials: true,
         });
         console.log("Fetched user:", res.data.user);
@@ -29,16 +19,16 @@ export default function UserStatusBar() {
       }
     }
     fetchUser();
-  }, [BACKEND_URL]);
+  }, []);
 
   const handleLogout = async () => {
     try {
-      await axios.get(`${BACKEND_URL}/auth/logout`, {
+      await axios.get("/api/auth/logout", {
         withCredentials: true,
       });
 
       setUser(null);
-      window.location.href = FRONTEND_URL;
+      window.location.href = "/";
     } catch (e) {
       console.error("Logout failed", e);
     }
@@ -58,14 +48,18 @@ export default function UserStatusBar() {
         </div>
       ) : (
         <div className="flex gap-x-4">
-          <a href="http://localhost:5000/auth/google">
+          <NavLink to="/" className="rounded-sm bg-emerald-900 px-2 py-1 text-sm text-gray-300 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-emerald-700 hover:text-gray-100">
+            Home
+          </NavLink>
+          <NavLink to="/login" className="rounded-sm bg-emerald-900 px-2 py-1 text-sm text-gray-300 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-emerald-700 hover:text-gray-100">
+            Login
+          </NavLink>
+          <NavLink to="/register" className="rounded-sm bg-emerald-900 px-2 py-1 text-sm text-gray-300 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-emerald-700 hover:text-gray-100">
+            Register
+          </NavLink>
+          <a href="/api/auth/google">
             <button className="rounded-sm bg-emerald-900 px-2 py-1 text-sm text-gray-300 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-emerald-700 hover:text-gray-100">
               Login with Google
-            </button>
-          </a>
-          <a href="http://localhost:5000/auth/google">
-            <button className="rounded-sm bg-emerald-900 px-2 py-1 text-sm text-gray-300 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-emerald-700 hover: text-gray-100">
-              Register with Google
             </button>
           </a>
         </div>

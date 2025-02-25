@@ -15,14 +15,13 @@ const sessionStore = new MySQLStore({
 });
 
 const sessionMiddleware = session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || "play him off, keyboard cat!",
   resave: false,
   saveUninitialized: false,
   store: sessionStore, // store session in MySQL
   cookie: {
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     httpOnly: true,
-    sameSite: "lax",
     maxAge: 1000 * 60 * 60 * 24,
   },
   // Set 'secure' to true in production (with HTTPS)
