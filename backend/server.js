@@ -14,7 +14,9 @@ const todoRoutes = require("./routes/todoRoutes");
 const reminderRoutes = require("./routes/reminderRoutes");
 const priorityRoutes = require("./routes/priorityRoutes");
 
-const allowedOrigins = [process.env.PRODUCTION_FRONTEND_URL];
+const allowedOrigins = [
+  process.env.PRODUCTION_FRONTEND_URL || process.env.FRONTEND_URL,
+];
 
 app.use(
   cors({
@@ -41,6 +43,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/", (req, res) => {
+  res.send("✅ Backend is running!");
+});
+
 app.use("/auth", authRoutes);
 
 app.use("/todos", todoRoutes);
@@ -48,4 +54,7 @@ app.use("/reminders", reminderRoutes);
 app.use("/priorities", priorityRoutes);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
