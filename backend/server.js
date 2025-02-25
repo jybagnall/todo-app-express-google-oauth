@@ -14,9 +14,17 @@ const todoRoutes = require("./routes/todoRoutes");
 const reminderRoutes = require("./routes/reminderRoutes");
 const priorityRoutes = require("./routes/priorityRoutes");
 
+const allowedOrigins = [process.env.PRODUCTION_FRONTEND_URL];
+
 app.use(
   cors({
-    origin: process.env.PRODUCTION_FRONTEND_URL,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
