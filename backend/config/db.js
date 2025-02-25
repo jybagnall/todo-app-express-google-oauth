@@ -17,7 +17,12 @@ const pool = mysql.createPool({
 (async () => {
   try {
     const connection = await pool.getConnection();
-    console.log("✅ Successfully connected to MySQL!");
+    console.log("✅ Successfully connected to MySQL database!");
+
+    // Fetch tables to verify connection
+    const [rows] = await connection.query("SHOW TABLES;");
+    console.log("📌 Tables in database:", rows);
+
     connection.release();
   } catch (err) {
     console.error("❌ Database connection failed:", err.message);
