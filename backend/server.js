@@ -16,7 +16,8 @@ const priorityRoutes = require("./routes/priorityRoutes");
 
 const allowedOrigins = [
   process.env.PRODUCTION_FRONTEND_URL || process.env.FRONTEND_URL,
-];
+  "http://localhost:5173",
+].filter(Boolean);
 
 app.use(
   cors({

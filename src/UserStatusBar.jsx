@@ -6,14 +6,14 @@ export default function UserStatusBar() {
   const [user, setUser] = useState(null);
 
   const BACKEND_URL =
-    process.env.NODE_ENV === "production"
-      ? process.env.PRODUCTION_BACKEND_URL
-      : process.env.BACKEND_URL;
+    import.meta.env.MODE === "production"
+      ? import.meta.env.VITE_PRODUCTION_BACKEND_URL
+      : import.meta.env.VITE_BACKEND_URL;
 
   const FRONTEND_URL =
-    process.env.NODE_ENV === "production"
-      ? process.env.PRODUCTION_FRONTEND_URL
-      : process.env.FRONTEND_URL;
+    import.meta.env.MODE === "production"
+      ? import.meta.env.VITE_process.env.PRODUCTION_FRONTEND_URL
+      : import.meta.env.VITE_FRONTEND_URL;
 
   useEffect(() => {
     async function fetchUser() {
