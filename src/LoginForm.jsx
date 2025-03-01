@@ -25,7 +25,7 @@ export default function LoginForm() {
         }
       );
 
-      if (res.status === 201) {
+      if (res.status === 200) {
         navigate("/");
       }
     } catch (error) {

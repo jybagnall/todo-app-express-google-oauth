@@ -72,8 +72,8 @@ router.post("/register", async (req, res, next) => {
 
 // ✅ fetch logged-in user data
 router.get("/user", (req, res) => {
-  console.log("🔹 Checking session:", req.session); // ✅ Log session
-  console.log("✅ req.user:", req.user); // ✅ Log req.user
+  console.log("Checking session:", req.session);
+  console.log("📍req.user:", req.user);
 
   if (!req.user) {
     return res.status(401).json({ user: null });
@@ -83,17 +83,25 @@ router.get("/user", (req, res) => {
 });
 
 // ✅ Manual Login Route
-router.post(
-  "/login",
-  passport.authenticate("local", { failWithError: true }),
-  (req, res) => {
-    if (req.session.messages) {
-      res.sendStatus(401);
-    } else {
-      res.sendStatus(201);
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (authErr, user, info) => {
+    if (authErr) {
+      return next(authErr);
     }
-  }
-);
+    if (!user) {
+      console.log("Login failed:", info);
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    req.login(user, (loginErr) => {
+      if (loginErr) {
+        return next(loginErr);
+      }
+
+      return res.status(200).json({ message: "Login successful", user });
+    });
+  })(req, res, next);
+});
 
 // ✅ Logout Route
 router.get("/logout", (req, res) => {

@@ -58,12 +58,9 @@ passport.use(
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
-      console.log(`Attempting to log in with email ${username}`);
       const [result] = await pool.execute("SELECT * FROM users WHERE email=?", [
         username,
       ]);
-
-      console.log("Database query result:", result); // ✅
 
       if (result.length === 0) {
         return done(null, false, { message: "Incorrect email or password" });
@@ -71,24 +68,18 @@ passport.use(
 
       const user = result[0];
 
-      console.log("🔹 Found user:", user); // ✅
-
       if (!verifyPassword(password, user.salt, user.hashed_password)) {
-        console.log("❌ Password verification failed");
-
         return done(null, false, { message: "Incorrect email or password" });
       }
-      console.log("✅ Login successful");
+
       return done(null, user);
     } catch (e) {
-      console.error("❌ Error in LocalStrategy:", e);
-
       return done(e, null);
     }
   })
 );
 
-// ✅ store user id in session, {"passport": { "user": user.id }}
+// ✅ store user ID in session, {"passport": { "user": user.id }}
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -96,13 +87,10 @@ passport.serializeUser((user, done) => {
 // browser sent session id, express-session retrieves session obj with it
 // Passport gets user id from session obj, then ✅ retrieve user with id.
 passport.deserializeUser(async (id, done) => {
-  console.log("🔹 Deserializing user ID:", id); // ✅
-
   try {
     const [user] = await pool.execute("SELECT * FROM users WHERE id = ?", [id]);
 
     if (user.length > 0) {
-      console.log("✅ User restored from session:", user[0]);
       done(null, user[0]); // Passport sent user obj to req.user.
       return;
     } else {
