@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useUser } from "./UserContext";
+import { useCallback, useContext, useEffect, useState } from "react";
+import UserContext from "./UserContext";
 
 export default function Reminders() {
   const [reminder, setReminder] = useState("");
-  const { user } = useUser();
+  const userContext = useContext(UserContext);
 
   const fetchReminders = useCallback(async () => {
-    if (!user) return;
+    if (!userContext.user) return;
 
     try {
       const res = await axios.get("/api/reminders", {
@@ -23,14 +23,14 @@ export default function Reminders() {
       console.error("failed to fetch reminders", e);
       setReminder("");
     }
-  }, [user]);
+  }, [userContext.user]);
 
   useEffect(() => {
     fetchReminders();
   }, [fetchReminders]);
 
   const saveReminder = async () => {
-    if (!user) {
+    if (!userContext.user) {
       alert("Please log in to add");
       return;
     }

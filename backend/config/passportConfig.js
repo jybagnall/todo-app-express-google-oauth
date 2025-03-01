@@ -7,7 +7,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const LocalStrategy = require("passport-local");
-
 const pool = require("./db");
 require("dotenv").config();
 const { verifyPassword } = require("../utils/hash-utils");

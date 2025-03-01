@@ -58,11 +58,17 @@ router.post("/register", async (req, res, next) => {
 
     const [newUser] = await pool.execute(newUserInfo_q, [result.insertId]);
 
-    req.login(newUser[0], (err) => {
+    const loggedInUser = {
+      id: newUser[0].id,
+      name: newUser[0].name,
+      email: newUser[0].email
+    };
+
+    req.login(loggedInUser, (err) => {
       if (err) {
         return next(err);
       }
-      return res.status(201).json({ user: newUser[0] });
+      return res.status(201).json({ user: loggedInUser });
     });
   } catch (e) {
     console.error(e);
@@ -79,7 +85,7 @@ router.get("/user", (req, res) => {
     return res.status(401).json({ user: null });
   }
 
-  res.json({ user: req.user });
+  res.json({ user: { id: req.user.id, name: req.user.name, email: req.user.email } });
 });
 
 // ✅ Manual Login Route
@@ -88,17 +94,19 @@ router.post("/login", (req, res, next) => {
     if (authErr) {
       return next(authErr);
     }
+
     if (!user) {
       console.log("Login failed:", info);
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    req.login(user, (loginErr) => {
-      if (loginErr) {
-        return next(loginErr);
-      }
+    const loggedInUser = {id: user.id, name: user.name, email: user.email};
 
-      return res.status(200).json({ message: "Login successful", user });
+    req.login(loggedInUser, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.json({ user: loggedInUser });
     });
   })(req, res, next);
 });

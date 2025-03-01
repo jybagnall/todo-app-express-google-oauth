@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require("../config/db");
 
 router.get("", async (req, res) => {
-  const user_id = req.session.user?.id;
+  const user_id = req.user?.id;
 
   if (!user_id) {
     return res.status(401).json({ error: "User not logged in" });
@@ -21,7 +21,7 @@ router.get("", async (req, res) => {
 
 router.post("", async (req, res) => {
   const { text } = req.body;
-  const user_id = req.session.user?.id; 
+  const user_id = req.user?.id; 
 
   if (!user_id) {
     return res.status(401).json({ error: "User not logged in" });
@@ -54,7 +54,7 @@ router.post("", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { text } = req.body;
-  const user_id = req.session.user?.id;
+  const user_id = req.user?.id;
 
   if (!user_id) {
     return res.status(401).json({ error: "User not authenticated" });
@@ -85,7 +85,7 @@ router.put("/:id", async (req, res) => {
 
 router.put("/toggle/:id", async (req, res) => {
   const { id } = req.params;
-  const user_id = req.session.user?.id;
+  const user_id = req.user?.id;
 
   if (!user_id) {
     return res.status(401).json({ error: "User not authenticated" });
@@ -119,7 +119,7 @@ router.put("/toggle/:id", async (req, res) => {
 
 router.delete("/delete/:id", async (req, res) => {
   const { id } = req.params;
-  const user_id = req.session.user?.id;
+  const user_id = req.user?.id;
 
   if (!user_id) {
     return res.status(401).json({ message: "User not authenticated" });
