@@ -10,6 +10,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const LocalStrategy = require("passport-local");
 const pool = require("./db");
 require("dotenv").config();
+const { verifyPassword } = require("../utils/hash-utils");
 
 // ✅ Setup Google OAuth Strategy
 passport.use(
@@ -54,33 +55,31 @@ passport.use(
   )
 );
 
-passport.use(new LocalStrategy(async (username, password, done) => {
-  try {
-    console.log(`Attempting to log in with username ${username}...`);
-    const [result] = await pool.execute("SELECT * FROM users WHERE email = ?", [username]);
-    if (result.length === 0) {
-      return done(null, false, { message: "Incorrect username or password." });
-    }
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      const [result] = await pool.execute("SELECT * FROM users WHERE email=?", [
+        username,
+      ]);
 
-    const user = result[0];
-
-    crypto.pbkdf2(password, user.salt, 310000, 32, "sha256", (err, hashedPassword) => {
-      if (err) {
-        return done(err, null);
+      if (result.length === 0) {
+        return done(null, false, { message: "Incorrect email or password" });
       }
 
-      if (user.hashed_password !== hashedPassword.toString("base64")) {
-        return done(null, false, {message: "Incorrect username or password."});
+      const user = result[0];
+
+      if (!verifyPassword(password, user.salt, user.hashed_password)) {
+        return done(null, false, { message: "Incorrect email or password" });
       }
 
       return done(null, user);
-    });
-  } catch (error) {
-    return done(error, null);
-  }
-}));
+    } catch (e) {
+      return done(e, null);
+    }
+  })
+);
 
-// ✅ store user id in session, {"passport": { "user": 10234 }}
+// ✅ store user ID in session, {"passport": { "user": user.id }}
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });

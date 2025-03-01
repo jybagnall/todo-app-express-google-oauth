@@ -6,12 +6,11 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      // all requests that start with "/api" should go to our express server running on port 5000
       "/api": {
-        target: "http://localhost:5000",
-        changeOrigin: true,
-        secure: false
-      }
-    }
-  }
+        target: "http://localhost:5000", // redirect API calls to backend
+        changeOrigin: true, // modify the 'Origin' header to match the 'target'
+        secure: false, // disable SSL verification
+      },
+    },
+  },
 });

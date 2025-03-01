@@ -4,8 +4,8 @@ const express = require("express");
 const app = express();
 
 require("./config/passportConfig");
-
 const sessionMiddleware = require("./config/sessionConfig");
+
 const passport = require("passport");
 
 const authRoutes = require("./routes/authRoutes");
@@ -30,5 +30,13 @@ app.use("/api/todos", todoRoutes);
 app.use("/api/reminders", reminderRoutes);
 app.use("/api/priorities", priorityRoutes);
 
+app.use((err, req, res, next) => {
+  console.error("Global error handler:", err);
+  return res.status(500).json({ message: "Server error" });
+});
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});

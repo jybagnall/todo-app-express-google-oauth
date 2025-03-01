@@ -44,8 +44,7 @@ router.post("/", async (req, res) => {
       await pool.execute(updateReminder_q, [text.trim(), user_id]);
       res.status(200).json({ text: text.trim() });
     } else {
-      const insert_q =
-        "INSERT INTO reminder (id, text, user_id) VALUES(1, ?, ?)";
+      const insert_q = "INSERT INTO reminder (text, user_id) VALUES(?, ?)";
       const [result] = await pool.execute(insert_q, [text, user_id]);
 
       res.status(201).json({ id: result.insertId, text: text.trim() });
