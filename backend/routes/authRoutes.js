@@ -64,9 +64,12 @@ router.post("/register", async (req, res, next) => {
       email: newUser[0].email
     };
 
-    req.session.user = loggedInUser;
-
-    return res.status(201).json({ user: loggedInUser });
+    req.login(loggedInUser, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.status(201).json({ user: loggedInUser });
+    });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ message: "Server error" });
@@ -78,11 +81,11 @@ router.get("/user", (req, res) => {
   console.log("Checking session:", req.session);
   console.log("📍req.user:", req.user);
 
-  if (!req.session.user) {
+  if (!req.user) {
     return res.status(401).json({ user: null });
   }
 
-  res.json({ user: req.session.user });
+  res.json({ user: { id: req.user.id, name: req.user.name, email: req.user.email } });
 });
 
 // ✅ Manual Login Route
@@ -97,17 +100,20 @@ router.post("/login", (req, res, next) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    const sessionUser = {id: user.id, name: user.name, email: user.email};
+    const loggedInUser = {id: user.id, name: user.name, email: user.email};
 
-    req.session.user = sessionUser;
-
-    return res.status(200).json({ message: "Login successful", user: sessionUser });
+    req.login(loggedInUser, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.json({ user: loggedInUser });
+    });
   })(req, res, next);
 });
 
 // ✅ Logout Route
 router.get("/logout", (req, res) => {
-  if (req.session.user && req.session.user.google_id) {
+  if (req.user && req.user.google_id) {
     console.log("🔹 Logging out Google OAuth user");
   } else {
     console.log("🔹 Logging out local user");

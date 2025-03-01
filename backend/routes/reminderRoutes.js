@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require("../config/db");
 
 router.get("/", async (req, res) => {
-  const user_id = req.session.user?.id;
+  const user_id = req.user?.id;
 
   if (!user_id) {
     return res.status(401).json({ message: "User not logged in" });
@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const { text } = req.body;
-  const user_id = req.session.user?.id;
+  const user_id = req.user?.id;
 
   if (!user_id) {
     return res.status(401).json({ message: "User not logged in" });
