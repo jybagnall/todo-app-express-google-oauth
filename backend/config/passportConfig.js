@@ -4,7 +4,6 @@
 // create a new record in the DB (if not existing yet)
 // store the user in the session
 
-const crypto = require("crypto");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const LocalStrategy = require("passport-local");
