@@ -1,16 +1,50 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import Login from "./Login";
 import Logo from "./Logo";
 import PriorityList from "./PriorityList";
-import UserStatusBar from "./UserStatusBar";
 import Register from "./Register";
-import Login from "./Login";
-
-import { UserProvider } from "./UserContext";
+import Reminders from "./Reminders";
+import TodoList from "./TodoList";
+import UserContext from "./UserContext";
 import UserStatusBar from "./UserStatusBar";
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    fetchUser(abortController);
+    return () => {
+      abortController.abort();
+    };
+  }, []);
+
+  async function fetchUser(abortController) {
+    setLoading(true);
+    try {
+      const res = await axios.get("/api/auth/user", {
+        signal: abortController.signal,
+        withCredentials: true,
+      });
+
+      setUser(res.data.user);
+    } catch (e) {
+      if (!abortController.signal.aborted) {
+        console.error("User not logged in", e);
+        setUser(null);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <UserProvider>
+    <UserContext.Provider value={{ user, setUser }}>
+      {loading && <h1 className="text-black">Loading...</h1>}
+      {!loading &&
       <div className="flex flex-col min-h-screen bg-white">
         <header className="shrink-0 bg-emerald-950 w-full">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 flex-wrap">
@@ -39,7 +73,8 @@ function App() {
           </Routes>
         </div>
       </div>
-    </UserProvider>
+      }
+    </UserContext.Provider>
   );
 }
 

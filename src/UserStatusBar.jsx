@@ -1,28 +1,10 @@
-import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { NavLink } from "react-router-dom";
+import UserContext from "./UserContext";
 
 export default function UserStatusBar() {
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
-
-  async function fetchUser() {
-    try {
-      const res = await axios.get("/api/auth/user", {
-        withCredentials: true,
-      });
-      console.log("Fetched user:", res.data.user); // ✅
-      setUser(res.data.user);
-      console.log("Updated user state:", res.data.user); // ✅
-    } catch (e) {
-      console.error("User not logged in", e);
-      setUser(null);
-    }
-  }
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  const userContext = useContext(UserContext);
 
   const handleLogout = async () => {
     try {
@@ -30,8 +12,8 @@ export default function UserStatusBar() {
         withCredentials: true,
       });
 
-      setUser(null);
-      navigate("/");
+      userContext.setUser(null);
+      location.href = "/";
     } catch (e) {
       console.error("Logout failed", e);
     }
@@ -39,9 +21,9 @@ export default function UserStatusBar() {
 
   return (
     <div className="flex items-center gap-x-8">
-      {user ? (
+      {userContext.user ? (
         <div className="flex items-center gap-x-4 text-slate-200">
-          <p className="text-sm text-slate-50">Welcome, {user.name}</p>
+          <p className="text-sm text-slate-50">Welcome, {userContext.user.name}</p>
           <button
             onClick={handleLogout}
             className="text-gray-400 hover:text-gray-300 text-sm"

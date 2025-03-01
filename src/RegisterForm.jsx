@@ -1,9 +1,8 @@
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import UserContext from "./UserContext";
 
 export default function RegisterForm() {
   const {
@@ -11,6 +10,7 @@ export default function RegisterForm() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const userContext = useContext(UserContext);
 
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
@@ -24,6 +24,7 @@ export default function RegisterForm() {
       });
 
       if (res.status === 201) {
+        userContext.setUser(res.data.user);
         navigate("/");
       }
     } catch (error) {
