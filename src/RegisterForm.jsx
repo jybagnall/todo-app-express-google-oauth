@@ -1,4 +1,6 @@
 import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function RegisterForm() {
@@ -7,63 +9,131 @@ export default function RegisterForm() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [redirect, setRedirect] = useState(false);
 
-  const BACKEND_URL =
-    process.env.NODE_ENV === "production"
-      ? process.env.PRODUCTION_BACKEND_URL
-      : process.env.BACKEND_URL;
-
-  const FRONTEND_URL =
-    process.env.NODE_ENV === "production"
-      ? process.env.PRODUCTION_FRONTEND_URL
-      : process.env.FRONTEND_URL;
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const onSubmit = async (data) => {
+    setErrorMessage(null);
+
     try {
-      const res = await axios.post(`${BACKEND_URL}/auth/register`, data);
+      const res = await axios.post("/api/auth/register", data, {
+        withCredentials: true,
+      });
 
       if (res.status === 201) {
-        window.location.href = FRONTEND_URL;
+        navigate("/");
       }
     } catch (error) {
       console.error("Registration failed:", error);
-      setRedirect(true);
+      setErrorMessage("Invalid email or password");
     }
   };
 
-  if (redirect) {
-    window.location.href = FRONTEND_URL;
-    return null;
-  }
-
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input {...register("name", { required: true })} placeholder="Name" />
-        {errors.name?.type === "required" && "Name is required"}
+    <div className="bg-white px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div>
+          <label
+            htmlFor="Name"
+            className="block text-sm/6 font-medium text-gray-900"
+          >
+            Name
+          </label>
+          <div className="mt-2">
+            <input
+              {...register("name", {
+                required: "Please enter your name",
+              })}
+              type="name"
+              name="name"
+              id="name"
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              placeholder="e.g.,John"
+            />
+          </div>
+        </div>
 
-        <input
-          {...register("email", {
-            required: true,
-            pattern: { value: /^\S+@\S+$/, message: "Invalid email format" },
-          })}
-          placeholder="Email"
-        />
-        {errors.email?.type === "required" && "Email is required"}
+        {errors.name?.message && (
+          <span className="mt-2 text-xm text-red-600">
+            {errors.name.message}
+          </span>
+        )}
 
-        <input
-          {...register("password", {
-            required: true,
-            minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters",
-            },
-          })}
-          placeholder="Password"
-        />
-        {errors.password?.type === "required" && "Password is required"}
-        <button type="submit">Register</button>
+        <div>
+          <label
+            htmlFor="Email"
+            className="block text-sm/6 font-medium text-gray-900"
+          >
+            Email
+          </label>
+          <div className="mt-2">
+            <input
+              {...register("email", {
+                required: "Please enter your email",
+                pattern: {
+                  value: /^\S+@\S+$/,
+                  message: "Invalid email format",
+                },
+              })}
+              type="email"
+              name="email"
+              id="email"
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              placeholder="e.g., yourname@yourhost.com"
+            />
+          </div>
+        </div>
+
+        {errors.email?.message && (
+          <span className="mt-2 text-xm text-red-600">
+            {errors.email.message}
+          </span>
+        )}
+
+        <div>
+          <label
+            htmlFor="Password"
+            className="block text-sm/6 font-medium text-gray-900"
+          >
+            Password
+          </label>
+          <div className="mt-2">
+            <input
+              {...register("password", {
+                required: "Please enter your password",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              })}
+              type="password"
+              placeholder="Enter a password"
+              name="password"
+              id="password"
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+            />
+          </div>
+        </div>
+
+        {errors.password?.message && (
+          <span className="mt-2 text-xm text-red-600">
+            {errors.password.message}
+          </span>
+        )}
+
+        {errorMessage && (
+          <span className="mt-2 text-xm text-red-600">{errorMessage}</span>
+        )}
+
+        <div>
+          <button
+            type="submit"
+            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Create account
+          </button>
+        </div>
       </form>
     </div>
   );

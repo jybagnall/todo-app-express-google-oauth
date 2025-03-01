@@ -13,7 +13,7 @@ export function UserProvider({ children }) {
 
   async function fetchUserStatus() {
     try {
-      const res = await axios.get("http://localhost:5000/auth/user", {
+      const res = await axios.get("/api/auth/user", {
         withCredentials: true,
       });
 

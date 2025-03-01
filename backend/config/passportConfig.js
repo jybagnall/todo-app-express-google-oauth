@@ -6,8 +6,11 @@
 
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const LocalStrategy = require("passport-local");
+
 const pool = require("./db");
 require("dotenv").config();
+const { verifyPassword } = require("../utils/hash-utils");
 
 // ✅ Setup Google OAuth Strategy
 passport.use(
@@ -15,7 +18,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -52,7 +55,40 @@ passport.use(
   )
 );
 
-// ✅ store user id in session, {"passport": { "user": 10234 }}
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      console.log(`Attempting to log in with email ${username}`);
+      const [result] = await pool.execute("SELECT * FROM users WHERE email=?", [
+        username,
+      ]);
+
+      console.log("Database query result:", result); // ✅
+
+      if (result.length === 0) {
+        return done(null, false, { message: "Incorrect email or password" });
+      }
+
+      const user = result[0];
+
+      console.log("🔹 Found user:", user); // ✅
+
+      if (!verifyPassword(password, user.salt, user.hashed_password)) {
+        console.log("❌ Password verification failed");
+
+        return done(null, false, { message: "Incorrect email or password" });
+      }
+      console.log("✅ Login successful");
+      return done(null, user);
+    } catch (e) {
+      console.error("❌ Error in LocalStrategy:", e);
+
+      return done(e, null);
+    }
+  })
+);
+
+// ✅ store user id in session, {"passport": { "user": user.id }}
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -60,10 +96,13 @@ passport.serializeUser((user, done) => {
 // browser sent session id, express-session retrieves session obj with it
 // Passport gets user id from session obj, then ✅ retrieve user with id.
 passport.deserializeUser(async (id, done) => {
+  console.log("🔹 Deserializing user ID:", id); // ✅
+
   try {
     const [user] = await pool.execute("SELECT * FROM users WHERE id = ?", [id]);
 
     if (user.length > 0) {
+      console.log("✅ User restored from session:", user[0]);
       done(null, user[0]); // Passport sent user obj to req.user.
       return;
     } else {
