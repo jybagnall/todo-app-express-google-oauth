@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import UserContext from "./UserContext";
 
 export default function LoginForm() {
   const {
@@ -9,6 +10,8 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const userContext = useContext(UserContext);
 
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
@@ -26,6 +29,7 @@ export default function LoginForm() {
       );
 
       if (res.status === 200) {
+        userContext.setUser(res.data.user);
         navigate("/");
       }
     } catch (error) {
@@ -61,13 +65,12 @@ export default function LoginForm() {
                 placeholder="e.g., yourname@yourhost.com"
               />
             </div>
+            {errors.email?.message && (
+              <span className="mt-2 text-xs text-red-600">
+                {errors.email.message}
+              </span>
+            )}
           </div>
-
-          {errors.email?.message && (
-            <span className="mt-2 text-xs text-red-600">
-              {errors.email.message}
-            </span>
-          )}
 
           <div>
             <label

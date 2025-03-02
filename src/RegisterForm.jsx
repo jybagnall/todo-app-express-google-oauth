@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import UserContext from "./UserContext";
 
 export default function RegisterForm() {
   const {
@@ -9,6 +10,8 @@ export default function RegisterForm() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const userContext = useContext(UserContext);
 
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
@@ -22,6 +25,7 @@ export default function RegisterForm() {
       });
 
       if (res.status === 201) {
+        userContext.setUser(res.data.user);
         navigate("/");
       }
     } catch (error) {
@@ -52,13 +56,12 @@ export default function RegisterForm() {
               placeholder="e.g.,John"
             />
           </div>
+          {errors.name?.message && (
+            <span className="mt-2 text-xs text-red-600">
+              {errors.name.message}
+            </span>
+          )}
         </div>
-
-        {errors.name?.message && (
-          <span className="mt-2 text-xm text-red-600">
-            {errors.name.message}
-          </span>
-        )}
 
         <div>
           <label
@@ -83,13 +86,12 @@ export default function RegisterForm() {
               placeholder="e.g., yourname@yourhost.com"
             />
           </div>
+          {errors.email?.message && (
+            <span className="mt-2 text-xs text-red-600">
+              {errors.email.message}
+            </span>
+          )}
         </div>
-
-        {errors.email?.message && (
-          <span className="mt-2 text-xm text-red-600">
-            {errors.email.message}
-          </span>
-        )}
 
         <div>
           <label
@@ -114,16 +116,16 @@ export default function RegisterForm() {
               className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             />
           </div>
+
+          {errors.password?.message && (
+            <span className="mt-2 text-xs text-red-600">
+              {errors.password.message}
+            </span>
+          )}
         </div>
 
-        {errors.password?.message && (
-          <span className="mt-2 text-xm text-red-600">
-            {errors.password.message}
-          </span>
-        )}
-
         {errorMessage && (
-          <span className="mt-2 text-xm text-red-600">{errorMessage}</span>
+          <span className="mt-2 text-xs text-red-600">{errorMessage}</span>
         )}
 
         <div>

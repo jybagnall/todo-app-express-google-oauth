@@ -4,13 +4,19 @@
 // create a new record in the DB (if not existing yet)
 // store the user in the session
 
+require("dotenv").config();
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const LocalStrategy = require("passport-local");
 
 const pool = require("./db");
-require("dotenv").config();
+
 const { verifyPassword } = require("../utils/hash-utils");
+
+const BACKEND_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.PRODUCTION_BACKEND_URL
+    : process.env.BACKEND_URL;
 
 // ✅ Setup Google OAuth Strategy
 passport.use(
@@ -18,7 +24,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/api/auth/google/callback",
+      callbackURL: `${BACKEND_URL}/api/auth/google/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

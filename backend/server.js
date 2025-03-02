@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 require("./config/passportConfig");
 const sessionMiddleware = require("./config/sessionConfig");
@@ -25,6 +26,15 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(
+  cors({
+    origin: [
+      process.env.FRONTEND_URL, // Local frontend
+      process.env.PRODUCTION_FRONTEND_URL, // Deployed frontend
+    ],
+    credentials: true,
+  })
+);
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 app.use("/api/reminders", reminderRoutes);

@@ -1,15 +1,15 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import axios from "axios";
 import PriorityItem from "./PriorityItem";
 import PriorityForm from "./PriorityForm";
-import { useUser } from "./UserContext";
+import UserContext from "./UserContext";
 
 export default function PriorityList() {
   const [priorities, setPriorities] = useState([]);
-  const { user } = useUser();
+  const userContext = useContext(UserContext);
 
   const fetchPriorities = useCallback(async () => {
-    if (!user) return;
+    if (!userContext.user) return;
 
     try {
       const res = await axios.get("/api/priorities", {
@@ -20,14 +20,14 @@ export default function PriorityList() {
     } catch (e) {
       console.error("failed to fetch priorities in front", e);
     }
-  }, [user]);
+  }, [userContext.user]);
 
   useEffect(() => {
     fetchPriorities();
   }, [fetchPriorities]);
 
   const addNewPriority = async (text) => {
-    if (!user) {
+    if (!userContext.user) {
       alert("Please log in to add");
       return;
     }
@@ -108,7 +108,10 @@ export default function PriorityList() {
     <div className="flex flex-col flex-[2] p-4 border border-gray-300 rounded-lg">
       <h2 className="text-lg font-semibold mb-2">Priorities</h2>
 
-      <PriorityForm addNewPriority={addNewPriority} isLoggedIn={user} />
+      <PriorityForm
+        addNewPriority={addNewPriority}
+        isLoggedIn={userContext.user}
+      />
 
       <fieldset className="space-y-2 mt-2">
         {priorities.map((p) => (

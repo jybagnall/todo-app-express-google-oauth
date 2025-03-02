@@ -14,3 +14,4 @@ export default defineConfig({
     },
   },
 });
+// 📍frontend will make requests directly to the backend(Railway)

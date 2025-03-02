@@ -1,10 +1,8 @@
-import { NavLink } from "react-router-dom";
-
 export default function GoogleButton() {
   return (
     <div className="mt-4 grid grid-cols-2 gap-4">
-      <NavLink
-        to="/api/auth/google"
+      <a
+        href="/api/auth/google"
         className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:ring-transparent"
       >
         <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
@@ -26,7 +24,7 @@ export default function GoogleButton() {
           />
         </svg>
         <span className="text-sm/6 font-semibold">Google</span>
-      </NavLink>
+      </a>
     </div>
   );
 }

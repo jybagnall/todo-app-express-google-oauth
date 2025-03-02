@@ -22,8 +22,8 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: `${FRONTEND_URL}`,
-    failureRedirect: `${FRONTEND_URL}`,
+    successRedirect: `${FRONTEND_URL}/`,
+    failureRedirect: `${FRONTEND_URL}/login`,
   })
 );
 
@@ -58,12 +58,15 @@ router.post("/register", async (req, res, next) => {
 
     const [newUser] = await pool.execute(newUserInfo_q, [result.insertId]);
 
-    req.login(newUser[0], (err) => {
-      if (err) {
-        return next(err);
-      }
-      return res.status(201).json({ user: newUser[0] });
-    });
+    const loggedInUser = {
+      id: newUser[0].id,
+      name: newUser[0].name,
+      email: newUser[0].email,
+    };
+
+    req.session.user = loggedInUser;
+
+    return res.status(201).json({ user: loggedInUser });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ message: "Server error" });
@@ -72,14 +75,11 @@ router.post("/register", async (req, res, next) => {
 
 // ✅ fetch logged-in user data
 router.get("/user", (req, res) => {
-  console.log("Checking session:", req.session);
-  console.log("📍req.user:", req.user);
-
-  if (!req.user) {
+  if (!req.session.user) {
     return res.status(401).json({ user: null });
   }
 
-  res.json({ user: req.user });
+  res.json({ user: req.session.user });
 });
 
 // ✅ Manual Login Route
@@ -93,24 +93,17 @@ router.post("/login", (req, res, next) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    req.login(user, (loginErr) => {
-      if (loginErr) {
-        return next(loginErr);
-      }
+    const sessionUser = { id: user.id, name: user.name, email: user.email };
+    req.session.user = sessionUser;
 
-      return res.status(200).json({ message: "Login successful", user });
-    });
+    return res
+      .status(200)
+      .json({ message: "Login successful", user: sessionUser });
   })(req, res, next);
 });
 
 // ✅ Logout Route
-router.get("/logout", (req, res) => {
-  if (req.user && req.user.google_id) {
-    console.log("🔹 Logging out Google OAuth user");
-  } else {
-    console.log("🔹 Logging out local user");
-  }
-
+router.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
 
