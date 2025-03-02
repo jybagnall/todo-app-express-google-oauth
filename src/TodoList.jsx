@@ -7,10 +7,10 @@ import UserContext from "./UserContext";
 
 export default function TodoList() {
   const [todos, setTodos] = useState([]);
-  const userContext = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   const fetchPriorityList = useCallback(async () => {
-    if (!userContext.user) return;
+    if (!user) return;
 
     try {
       const res = await axios.get("/api/todos", {
@@ -21,14 +21,14 @@ export default function TodoList() {
     } catch (e) {
       console.error("failed to fetch todos", e);
     }
-  }, [userContext.user]);
+  }, [user]);
 
   useEffect(() => {
     fetchPriorityList();
   }, [fetchPriorityList]);
 
   const addTodo = async (newText) => {
-    if (!userContext.user) {
+    if (!user) {
       alert("Please log in to add");
       return;
     }
@@ -103,7 +103,7 @@ export default function TodoList() {
   return (
     <div className="p-4 border border-gray-300 rounded-lg">
       <h2 className="text-lg font-semibold mb-2">TO DO</h2>
-      <Form addTodo={addTodo} isLoggedIn={userContext.user} />
+      <Form addTodo={addTodo} isLoggedIn={user} />
 
       <fieldset className="space-y-2 mt-2">
         {todos.map((item) => (

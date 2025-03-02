@@ -7,9 +7,12 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5000", // redirect API calls to backend
-        changeOrigin: true, // modify the 'Origin' header to match the 'target'
-        secure: false, // disable SSL verification
+        target:
+          process.env.NODE_ENV === "production"
+            ? "https://todo-app-express-google-oauth-production-6b03.up.railway.app"
+            : "http://localhost:5000",
+        changeOrigin: true,
+        secure: false,
       },
     },
   },
